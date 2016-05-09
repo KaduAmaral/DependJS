@@ -1,0 +1,24 @@
+body {
+   margin: 0;
+   padding: 0;
+}
+.block {
+   font-family: 'Consolas', sans-serif;
+   font-size: 12px;
+   background-color: #E5E5E5;
+   display: block;
+   margin: 20px auto;
+   padding: 8px;
+   border: 1px solid #DDD;
+   border-radius: 4px;
+   min-height: 120px;
+   box-sizing: border-box;
+}
+
+.text {color:#333;}
+
+.success {color: #028c02;}
+
+.error{color: #c61414;}
+
+.warning {color: #876923;}

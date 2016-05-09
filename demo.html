@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>DependJS</title>
+   <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+   <script type="text/javascript" src="depend.js"></script>
+</head>
+<body>
+   <div class="container">
+      <pre id="result" class="block"></pre>
+   </div>
+   <script type="text/javascript">
+   var Dependencies;
+      jQuery(document).ready(function($) {
+
+         function Log(m, e) {
+            document.getElementById('result').innerHTML += "<div class='"+(e||'text')+"'>"+m+"</div>\n";
+         }
+
+         function Error(m) {Log(m, 'error');}
+         function Success(m) {Log(m, 'success');}
+         function Warning(m) {Log(m, 'warning');}
+
+         function NewBlock(html) {
+            $('.container').append($('<div />',{class:'block'}).html(html));
+         }
+
+         Dependencies = new DependJS([
+            { // Css
+               styles: [
+                  {
+                     href:'demo.css', 
+                     success: function(){Success('Demo.css carregado.')}, 
+                     error: function(){Error('Erro ao carregar demo.css.')}
+                  },
+                  {
+                     href:'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css', 
+                     success: function(){Success('bootstrap.css carregado.')}, 
+                     error: function(){Error('Erro ao carregar bootstrap.css.')}
+                  }
+
+               ]
+            },
+            { // jQuery
+               key: 'jquery',
+               src: 'https://code.jquery.com/jquery-2.2.3.min.js',
+               waitthis: true,
+               success: function() {
+                  Success('jQuery carregado.');
+               },
+               error: function() {
+                  Error('Falha ao carregar jQuery.');
+               },
+               ignore: function() {
+                  Warning('Dependencia jQuery foi ignorada.');
+               },
+               check: function() {
+                  Log('Checando jQuery...');
+                  return (!!window["jQuery"] && typeof(window["jQuery"]) == 'function');
+               }
+            },
+            { // MomentJS
+               key: 'moment',
+               src: 'http://momentjs.com/downloads/moment.js',
+               success: function() {
+                  Success('MomentJS carregado.');
+               },
+               error: function() {
+                  Error('Falha ao carregar MomentJS;');
+               },
+               ignore: function() {
+                  Warning('Dependencia MomentJS foi ignorada.');
+               },
+               check: function() {
+                  Log('Checando MomentJS...');
+                  return (!!window["moment"] && typeof(window["moment"]) == 'function');
+               }
+            },
+            { // Bootstrap
+               key: 'bootstrap',
+               src: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js',
+               success: function() {
+                  Success('Bootstrap.js carregado.');
+               },
+               error: function() {
+                  Error('Falha ao carregar Bootstrap.js');
+               }
+            }
+         ], function() {
+            Success('Tudo carregado.');
+         }, function() {
+            Warning('Tudo executado, mas houve falhas...');
+         }).done(function(){
+            Log('Executando Done...');
+            Success('Tudo executado.');
+         }).error(function(){
+            Log('Executando Error...');
+            Error('Tudo executado, mas houve algumas falhas...');
+         });
+
+         Dependencies.done('moment', function(){
+            Success('Executando moment.done');
+            NewBlock(moment().format());
+         });
+
+         Dependencies.done('bootstrap', function(){
+            Success('Executando bootstrap.done');
+            var html =  '<div class="jumbotron">'+
+                        '<h1>Hello, world!</h1> '+
+                        '<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>'+
+                        '<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p> </div>';
+
+            NewBlock(html);
+         });
+      });
+   </script>
+</body>
+</html>
